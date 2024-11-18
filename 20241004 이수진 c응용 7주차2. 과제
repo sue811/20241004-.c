@@ -2,7 +2,7 @@
 #include <time.h>
 #include <stdlib.h>
 #define SIZE 100
-typedef sstruct point{
+typedef struct point{
     int x;
     int y;
 } POINT;
