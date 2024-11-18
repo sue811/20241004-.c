@@ -15,7 +15,7 @@ int main()
 
     srand(time(NULL));
     for(int i=0; i<SIZE; i++){
-        point[i].x = rnad() % 101;
+        point[i].x = rand() % 101;
         point[i].y = rand() % 101;
     }
     for(int i=0; i<SIZE; i++){
