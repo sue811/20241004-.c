@@ -1,0 +1,159 @@
+#include <stdio.h>
+#include <string.h>
+
+#define PRODUCT_COUNT 5
+
+// 상품 구조체 정의
+typedef struct {
+    int id;
+    char name[20];
+    int stock;
+    int incoming; // 입고량
+    int sales;    // 판매량
+    int revenue;  // 판매금액
+} Product;
+
+// 함수 선언
+void showMenu();
+void processInput(int choice, Product products[]);
+void handleStockIn(Product products[]);
+void handleStockOut(Product products[]);
+void showIndividualStatus(Product products[]);
+void showAllStatus(Product products[]);
+
+int main() {
+    Product products[PRODUCT_COUNT] = {
+        {1, "상품1", 0, 0, 0, 0},
+        {2, "상품2", 0, 0, 0, 0},
+        {3, "상품3", 0, 0, 0, 0},
+        {4, "상품4", 0, 0, 0, 0},
+        {5, "상품5", 0, 0, 0, 0}
+    };
+    int choice;
+
+    do {
+        showMenu();
+        printf("원하는 메뉴를 선택하세요 (1~5): ");
+        scanf_s("%d", &choice);
+        processInput(choice, products);
+    } while (choice != 5);
+
+    printf("프로그램을 종료합니다.\n");
+    return 0;
+}
+
+// 메뉴 출력
+void showMenu() {
+    printf("\n[쇼핑몰 재고 관리 프로그램]\n");
+    printf("1. 입고\n");
+    printf("2. 판매\n");
+    printf("3. 개별현황\n");
+    printf("4. 전체현황\n");
+    printf("5. 종료\n");
+}
+
+// 사용자 입력 처리
+void processInput(int choice, Product products[]) {
+    switch (choice) {
+    case 1:
+        handleStockIn(products);
+        break;
+    case 2:
+        handleStockOut(products);
+        break;
+    case 3:
+        showIndividualStatus(products);
+        break;
+    case 4:
+        showAllStatus(products);
+        break;
+    case 5:
+        break;
+    default:
+        printf("잘못된 입력입니다. 다시 선택해주세요.\n");
+        break;
+    }
+}
+
+// 입고 처리
+void handleStockIn(Product products[]) {
+    int id, quantity;
+
+    printf("입고할 상품 ID를 입력하세요 (1~%d): ", PRODUCT_COUNT);
+    scanf_s("%d", &id);
+
+    if (id < 1 || id > PRODUCT_COUNT) {
+        printf("잘못된 상품 ID입니다.\n");
+        return;
+    }
+
+    printf("입고량을 입력하세요: ");
+    scanf_s("%d", &quantity);
+
+    products[id - 1].stock += quantity;
+    products[id - 1].incoming += quantity;
+
+    printf("상품 %d (%s)의 재고가 %d로 업데이트되었습니다.\n", id, products[id - 1].name, products[id - 1].stock);
+}
+
+// 판매 처리
+void handleStockOut(Product products[]) {
+    int id, quantity, price;
+
+    printf("판매할 상품 ID를 입력하세요 (1~%d): ", PRODUCT_COUNT);
+    scanf_s("%d", &id);
+
+    if (id < 1 || id > PRODUCT_COUNT) {
+        printf("잘못된 상품 ID입니다.\n");
+        return;
+    }
+
+    printf("판매량을 입력하세요: ");
+    scanf_s("%d", &quantity);
+
+    if (quantity > products[id - 1].stock) {
+        printf("재고가 부족합니다. (현재 재고: %d)\n", products[id - 1].stock);
+        return;
+    }
+
+    printf("상품의 개당 가격을 입력하세요: ");
+    scanf_s("%d", &price);
+
+    products[id - 1].stock -= quantity;
+    products[id - 1].sales += quantity;
+    products[id - 1].revenue += quantity * price;
+
+    printf("상품 %d (%s)의 판매가 완료되었습니다. (남은 재고: %d)\n", id, products[id - 1].name, products[id - 1].stock);
+}
+
+// 개별 상품 현황 출력
+void showIndividualStatus(Product products[]) {
+    int id;
+
+    printf("조회할 상품 ID를 입력하세요 (1~%d): ", PRODUCT_COUNT);
+    scanf_s("%d", &id);
+
+    if (id < 1 || id > PRODUCT_COUNT) {
+        printf("잘못된 상품 ID입니다.\n");
+        return;
+    }
+
+    Product p = products[id - 1];
+    printf("\n[상품 개별 현황]\n");
+    printf("상품 ID: %d\n", p.id);
+    printf("상품 이름: %s\n", p.name);
+    printf("재고: %d\n", p.stock);
+    printf("입고량: %d\n", p.incoming);
+    printf("판매량: %d\n", p.sales);
+    printf("판매금액: %d\n", p.revenue);
+}
+
+// 전체 상품 현황 출력
+void showAllStatus(Product products[]) {
+    printf("\n[전체 상품 현황]\n");
+    printf("ID\t이름\t재고\t입고량\t판매량\t판매금액\n");
+    printf("-------------------------------------------------\n");
+    for (int i = 0; i < PRODUCT_COUNT; i++) {
+        printf("%d\t%s\t%d\t%d\t%d\t%d\n", products[i].id, products[i].name, products[i].stock, products[i].incoming, products[i].sales, products[i].revenue);
+    }
+}
