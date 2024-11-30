@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+
+int main() {
+    int year, month, day;
+    struct tm inputDate = { 0 };
+    time_t now, inputTime, diff;
+
+    // 현재 날짜 가져오기
+    now = time(NULL);
+    struct tm* currentDate = localtime(&now);
+
+    printf("Enter YYYY MM DD: ");
+    scanf_s("%d %d %d", &year, &month, &day);
+
+    // 입력받은 날짜 설정
+    inputDate.tm_year = year - 1900; // 연도는 1900 기준
+    inputDate.tm_mon = month - 1;   // 월은 0부터 시작
+    inputDate.tm_mday = day;
+
+    // 입력 날짜를 time_t로 변환
+    inputTime = mktime(&inputDate);
+
+    if (inputTime == -1) {
+        printf("Invalid date!\n");
+        return 1;
+    }
+
+    // 현재 날짜와 입력받은 날짜의 차이 계산
+    diff = difftime(inputTime, now);
+    int days = (int)(diff / (60 * 60 * 24)); // 초를 일수로 변환
+
+    if (days > 0) {
+        printf("The date %d-%02d-%02d is %d days from today.\n", year, month, day, days);
+    }
+    else if (days < 0) {
+        printf("The date %d-%02d-%02d was %d days ago.\n", year, month, day, -days);
+    }
+    else {
+        printf("The date %d-%02d-%02d is today.\n", year, month, day);
+    }
+
+    return 0;
+}
